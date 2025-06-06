@@ -1,3 +1,4 @@
 /backend/node_modules
 /fontend/node_modules
 /backend/.env
+/admin/.env
