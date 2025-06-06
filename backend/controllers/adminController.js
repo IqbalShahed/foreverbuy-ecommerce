@@ -31,7 +31,7 @@ const adminLogin = async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
 
-        res.status(200).json({ success: true, token });
+        res.status(200).json({ success: true, message: "Logged in successfully." });
     } catch (err) {
         console.error("Admin Login Error:", err);
         res.status(500).json({ success: false, message: "Server error" });
@@ -46,5 +46,13 @@ const getAdminData = (req, res) => {
     });
 };
 
+const adminLogout = (req, res) => {
+    res.clearCookie("admin_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    });
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+};
 
-export { adminLogin, getAdminData };
+export { adminLogin, getAdminData, adminLogout };
