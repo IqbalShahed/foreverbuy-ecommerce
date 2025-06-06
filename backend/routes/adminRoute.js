@@ -6,7 +6,7 @@ import { verifyAdmin } from '../middleware/authMiddleware.js';
 // Rate limiter: max 5 requests per minute per IP
 const loginLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
-    max: 5,
+    max: 50,
     message: "Too many login attempts. Please try again after 1 minute."
 })
 
