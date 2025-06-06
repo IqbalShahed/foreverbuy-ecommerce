@@ -2,11 +2,12 @@ import express from 'express';
 import { addProduct, listProducts, removeProduct, singleProduct } from '../controllers/productController.js';
 import upload from '../middleware/multer.js';
 import multer from 'multer';
+import { verifyAdmin } from '../middleware/authMiddleware.js';
 
 const productRouter = express.Router();
 
 productRouter.post(
-    '/add',
+    '/add', verifyAdmin ,
     upload.fields([
         { name: 'image1', maxCount: 1 },
         { name: 'image2', maxCount: 1 },
@@ -16,7 +17,7 @@ productRouter.post(
     addProduct
 );
 productRouter.get('/list', listProducts);
-productRouter.delete('/remove/:id', removeProduct);
+productRouter.delete('/remove/:id', verifyAdmin , removeProduct);
 productRouter.get('/single/:id', singleProduct);
 
 // Error handling middleware for Multer
