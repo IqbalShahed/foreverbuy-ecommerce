@@ -28,7 +28,7 @@ const Login = () => {
                         <input
                             type="email"
                             className="rounded-md w-full px-3 py-2 border border-gray-300 outline-none"
-                            placeholder="Admin Email"
+                            placeholder="Email"
                             required
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -38,7 +38,7 @@ const Login = () => {
                         <input
                             type="password"
                             className="rounded-md w-full px-3 py-2 border border-gray-300 outline-none"
-                            placeholder="Admin Password"
+                            placeholder="Password"
                             required
                             onChange={(e) => setPassword(e.target.value)}
                         />
