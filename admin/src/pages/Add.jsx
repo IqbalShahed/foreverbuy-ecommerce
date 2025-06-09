@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { assets } from "../assets/admin_assets/assets";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 const CATEGORIES = ["Men", "Women", "Kids"];
 const SUBCATEGORIES = ["Topwear", "Bottomwear", "Winterwear"];
@@ -17,14 +18,13 @@ const Add = () => {
     const [bestseller, setBestseller] = useState(false);
     const [sizes, setSizes] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
 
     const isValidImage = (file) =>
         file && file.type.startsWith("image/") && file.size <= MAX_IMAGE_SIZE_MB * 1024 * 1024;
 
     const handleImageChange = (index, file) => {
         if (!isValidImage(file)) {
-            alert(`Invalid file: Must be image and < ${MAX_IMAGE_SIZE_MB}MB`);
+            toast.error(`Invalid file: Must be image and < ${MAX_IMAGE_SIZE_MB}MB`);
             return;
         }
         setImages((prev) => {
@@ -42,7 +42,6 @@ const Add = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-        setMessage("");
         setLoading(true);
 
         try {
@@ -56,10 +55,10 @@ const Add = () => {
             formData.append("sizes", JSON.stringify(sizes));
 
             images.forEach((img, index) => {
-                if (img) formData.append(`image${index + 1}`, img); // e.g., image1, image2, ...
+                if (img) formData.append(`image${index + 1}`, img);
             });
 
-            await axios.post(
+            const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/api/product/add`,
                 formData,
                 {
@@ -67,10 +66,23 @@ const Add = () => {
                     headers: { "Content-Type": "multipart/form-data" },
                 }
             );
-            setMessage("Product added successfully!");
+            if (res.data.success) {
+                toast.success(res.data.message);
+                setImages([null, null, null, null]);
+                setName("");
+                setDescription("");
+                setPrice("");
+                setCategory(CATEGORIES[0]);
+                setSubCategory(SUBCATEGORIES[0]);
+                setBestseller(false);
+                setSizes([]);
+            } else{
+                toast.error(res.data.message);
+            }
+
         } catch (err) {
-            console.error(err.response?.data || err.message);
-            setMessage("Failed to add product. Try again.");
+            console.error(err);
+            toast.error(err.message);
         } finally {
             setLoading(false);
         }
@@ -194,18 +206,12 @@ const Add = () => {
                     Add to bestseller
                 </label>
             </div>
-
-            {
-                message.includes("Failed") ?
-                    <p className="text-red-500 mt-2">{message}</p> :
-                    <p className="text-green-500 mt-2">{message}</p>
-            }
             <button
                 type="submit"
                 className="w-28 py-3 mt-4 bg-black text-white"
                 disabled={loading}
             >
-                {loading ? "Adding..." : "ADD"}
+                {loading ? "ADDING..." : "ADD"}
             </button>
         </form>
     );
