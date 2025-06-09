@@ -14,7 +14,7 @@ function Orders() {
                     products.slice(1, 4).map((product) => (
                         <div key={product._id} className='py-4 border-y border-gray-300 text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
                             <div className='flex items-start gap-6 text-sm'>
-                                <img className='w-16 sm:w-20' src={product.image?.[0] || ''} />
+                                <img className='w-16 sm:w-20' src={product.image[0]?.url || ''} />
                                 <div>
                                     <p className='sm:text-base font-medium'>{product.name}</p>
                                     <div className='flex items-center gap-3 mt-2 text-base text-gray-700'>

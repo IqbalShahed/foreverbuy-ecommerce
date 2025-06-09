@@ -81,7 +81,7 @@ const listProducts = async (req, res) => {
         const products = await Product.find(query)
             .sort({ _id: -1 }) // Newest first by ObjectId
             .limit(queryLimit)
-            .select("name price image category bestseller");
+            .select("name price image category sizes bestseller");
 
         if (!products || products.length === 0) {
             return res.status(200).json({

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useShop } from '../context/ShopContex';
 import { assets } from "../assets/frontend_assets/assets";
-import { useLocation } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 
 const SearchBar = () => {
     const { search, setSearch, showSearch, setShowSearch } = useShop();

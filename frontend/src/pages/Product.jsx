@@ -16,9 +16,10 @@ function Product() {
         const product = products.find(item => item._id === productId);
         if (product) {
             setProductDetails(product);
-            setImage(product.image?.[0] || '');
+            setImage(product.image?.[0]);
         }
     }, [productId, products]);
+    
 
     if (!productDetails) return <div>Loading...</div>;
 
@@ -29,18 +30,18 @@ function Product() {
                 {/* Product Images */}
                 <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
                     <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
-                        {productDetails.image.map((img, index) => (
+                        {productDetails.image.map((img) => (
                             <img
                                 onClick={() => setImage(img)}
-                                src={img}
-                                key={index}
-                                alt={`Product thumbnail ${index + 1}`}
+                                src={img.url}
+                                key={img._id}
+                                alt={img._id}
                                 className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer'
                             />
                         ))}
                     </div>
                     <div className='w-full sm:w-[80%]'>
-                        <img src={image} alt="Selected product" className='w-full h-auto' />
+                        <img src={image.url} alt="Selected product" className='w-full h-auto' />
                     </div>
                 </div>
 
@@ -65,7 +66,7 @@ function Product() {
                     <div className='flex flex-col gap-4 my-8'>
                         <p>Select Size</p>
                         <div className='flex gap-2'>
-                            {productDetails.sizes.map((item, index) => (
+                            {productDetails.sizes?.map((item, index) => (
                                 <button
                                     key={index}
                                     onClick={() => setSize(item)}
@@ -77,7 +78,7 @@ function Product() {
                         </div>
                     </div>
 
-                    <button onClick={()=> addToCart(productDetails._id, size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
+                    <button onClick={() => addToCart(productDetails._id, size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
 
                     <hr className='mt-8 sm:w-3/4 border-gray-300' />
 
