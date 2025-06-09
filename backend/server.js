@@ -15,9 +15,9 @@ const PORT = process.env.PORT || 4000;
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5174", // frontend URL
+    origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
     credentials: true
-}))
+}));
 app.use(cookieParser())
 connectDB();
 connectCloudinary();

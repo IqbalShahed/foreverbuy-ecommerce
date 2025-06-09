@@ -4,3 +4,9 @@
 * {
   font-family: "Outfit", sans-serif;
 }
+
+select, input, textarea {
+  border: 1px solid #c2c2c2;
+  outline-color: #c586c5;
+  border-radius: 4px;
+}
