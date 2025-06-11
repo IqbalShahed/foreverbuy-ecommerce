@@ -11,7 +11,7 @@ const createToken = (id) => {
 };
 
 // Route for user login
-const loginUser = async (req, res) => {
+const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -34,7 +34,16 @@ const loginUser = async (req, res) => {
 
         // Issue JWT token
         const token = createToken(user._id);
-        return res.status(200).json({ success: true, token });
+
+        // Send via HTTP-only cookie
+        res.cookie("user_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
+
+        return res.status(200).json({ success: true, user: user._id, message: "Successfully LoggedIn" });
 
     } catch (error) {
         console.error("User Login error:", error);
@@ -83,7 +92,16 @@ const registerUser = async (req, res) => {
         // Generate token
         const token = createToken(user._id);
 
-        return res.status(200).json({ success: true, token });
+        // Send via HTTP-only cookie
+        res.cookie("user_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
+
+
+        return res.status(200).json({ success: true, user: user._id, message: "Registration Success" });
 
     } catch (error) {
         console.error("Registration error:", error);
@@ -91,4 +109,25 @@ const registerUser = async (req, res) => {
     }
 };
 
-export { loginUser, registerUser };
+const getUserData = (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "User is authenticated",
+        user: req.user._id,
+    });
+};
+
+const userLogout = (req, res) => {
+    res.clearCookie("user_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    });
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+};
+
+export { userLogin, registerUser, getUserData, userLogout };

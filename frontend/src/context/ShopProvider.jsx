@@ -14,6 +14,7 @@ const ShopProvider = ({ children }) => {
     const [nextCursor, setNextCursor] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const navigate = useNavigate();
+    const [token, setToken] = useState('');
 
     // Fetch Products
     const fetchProducts = useCallback(async () => {
@@ -110,7 +111,10 @@ const ShopProvider = ({ children }) => {
         getCartAmount,
         navigate,
         backendUrl,
-    }), [search, showSearch, cartItems, addToCart, getCartCount, updateQuantity, getCartAmount, navigate, products]);
+        token,
+        setToken,
+        setCartItems
+    }), [search, showSearch, cartItems, addToCart, getCartCount, updateQuantity, getCartAmount, navigate, products, token, setToken]);
 
     return (
         <ShopContext.Provider value={contextValue}>

@@ -47,8 +47,18 @@ export const AuthProvider = ({ children }) => {
 
 
     const logout = async () => {
-        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/admin/logout`, {}, { withCredentials: true });
-        setUser(null);
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/admin/logout`, {}, { withCredentials: true });
+            if (res.data.success) {
+                setUser(null);
+                toast.success(res.data.message);
+            } else {
+                toast.error(res.data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+        }
     };
 
     return (

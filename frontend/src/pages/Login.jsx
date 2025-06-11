@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
-    const [currentState, setCurrentState] = useState('Sign Up');
+    const [currentState, setCurrentState] = useState('Sign In');
     const isSignUp = currentState === 'Sign Up';
+    const { login, register } = useAuth();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-        // Handle form submission
+        try {
+            if (currentState === "Sign Up") {
+                await register(name, email, password);
+            } else {
+                await login(email, password);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message)
+        }
     };
 
     return (
@@ -21,6 +36,7 @@ function Login() {
 
             {isSignUp && (
                 <input
+                    onChange={(e) => setName(e.target.value)}
                     type="text"
                     className="w-full px-3 py-2 border border-gray-800"
                     required
@@ -29,12 +45,14 @@ function Login() {
             )}
 
             <input
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 className="w-full px-3 py-2 border border-gray-800"
                 required
                 placeholder="Email"
             />
             <input
+                onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 className="w-full px-3 py-2 border border-gray-800"
                 required

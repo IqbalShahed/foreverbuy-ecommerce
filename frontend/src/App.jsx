@@ -13,6 +13,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
 import { ToastContainer } from 'react-toastify';
+import PublicRoute from "./routes/PublicRoute";
+import PrivateRoute from "./routes/PrivateRoute";
 
 
 const App = () => {
@@ -22,15 +24,15 @@ const App = () => {
       <Navbar />
       <SearchBar />
       <Routes>
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/" element={<Home />} />
         <Route path="/collection" element={<Collection />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/product/:productId" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/place-order" element={<PlaceOrder />} />
+        <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
+        <Route path="/place-order" element={<PrivateRoute><PlaceOrder /></PrivateRoute>} />
       </Routes>
       <Footer />
     </div>
