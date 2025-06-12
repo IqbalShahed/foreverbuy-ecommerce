@@ -3,13 +3,11 @@ import { useEffect, useState } from "react"
 import { backendUrl } from "../config/shopConfig";
 import { toast } from "react-toastify";
 import { AuthContext } from "./AuthContext";
-import { useShop } from "./ShopContex";
 import { useNavigate } from "react-router";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const {setCartItems} = useShop();
     const navigate = useNavigate();
 
     const checkAuth = async () => {
@@ -71,7 +69,6 @@ export const AuthProvider = ({ children }) => {
             const res = await axios.post(`${backendUrl}/api/user/logout`, {}, { withCredentials: true });
             if (res.data.success) {
                 setUser(null);
-                setCartItems({});
                 navigate("/login")
                 toast.success(res.data.message);
             } else {

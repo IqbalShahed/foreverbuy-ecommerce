@@ -7,6 +7,7 @@ import connectCloudinary from './config/cloudinary.js';
 import userRouter from './routes/userRoute.js';
 import productRouter from './routes/productRoute.js';
 import adminRouter from './routes/adminRoute.js';
+import cartRoute from './routes/cartRoute.js';
 
 // App Config
 const app = express();
@@ -26,6 +27,7 @@ connectCloudinary();
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/cart/', cartRoute);
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);

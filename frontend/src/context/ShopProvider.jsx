@@ -4,6 +4,7 @@ import { ShopContext } from "./ShopContex";
 import { backendUrl, currency, deliveryFee } from "../config/shopConfig";
 import { useNavigate } from "react-router";
 import axios from 'axios';
+import { useAuth } from "./AuthContext";
 
 const ShopProvider = ({ children }) => {
     const [search, setSearch] = useState('');
@@ -15,6 +16,14 @@ const ShopProvider = ({ children }) => {
     const [hasMore, setHasMore] = useState(true);
     const navigate = useNavigate();
     const [token, setToken] = useState('');
+    const { user } = useAuth();
+
+    // Clear cart when user logs out
+    useEffect(() => {
+        if (!user) {
+            setCartItems({});
+        }
+    }, [user]);
 
     // Fetch Products
     const fetchProducts = useCallback(async () => {
@@ -33,29 +42,59 @@ const ShopProvider = ({ children }) => {
             } else {
                 toast.error(res.data.message);
             }
-            
+
         } catch (error) {
             console.error(error);
             toast.error("Failed to fetch products");
         }
     }, [nextCursor, hasMore]);
 
+    // Get user cart data from DB
+    const userCartData = useCallback(async () => {
+        try {
+            const res = await axios.get(`${backendUrl}/api/cart/get`, { withCredentials: true });
+            setCartItems(res.data.cartData);
+        } catch (error) {
+            console.error(error);
+            toast.error(error?.response?.data?.message || error.message);
+        }
+    }, []);
+
+
     useEffect(() => {
         fetchProducts();
-    }, [fetchProducts]);
+        if (user) {
+            userCartData();
+        }
+    }, [fetchProducts, user, userCartData]);
 
-    const addToCart = useCallback((itemId, size) => {
+    const addToCart = useCallback(async (itemId, size) => {
         if (!size) {
             toast.error('Select Product Size');
             return;
         }
+
         setCartItems(prev => {
             const updated = { ...prev };
             if (!updated[itemId]) updated[itemId] = {};
             updated[itemId][size] = (updated[itemId][size] || 0) + 1;
             return updated;
         });
-    }, []);
+        if (user) {
+            try {
+                await axios.post(
+                    `${backendUrl}/api/cart/add`,
+                    { itemId, size },
+                    { withCredentials: true }
+                );
+            } catch (error) {
+                console.error(error);
+                toast.error(error?.response?.data?.message || error.message);
+            }
+        }
+    }, [user]);
+
+
 
     const getCartCount = useCallback(() => {
         return Object.values(cartItems).reduce(
@@ -65,7 +104,7 @@ const ShopProvider = ({ children }) => {
         );
     }, [cartItems]);
 
-    const updateQuantity = useCallback((itemId, size, quantity) => {
+    const updateQuantity = useCallback(async (itemId, size, quantity) => {
         setCartItems(prev => {
             const updated = { ...prev };
             if (quantity === 0) {
@@ -79,7 +118,19 @@ const ShopProvider = ({ children }) => {
             }
             return updated;
         });
-    }, []);
+        if (user) {
+            try {
+                await axios.put(
+                    `${backendUrl}/api/cart/update`,
+                    { itemId, size, quantity },
+                    { withCredentials: true }
+                );
+            } catch (error) {
+                console.error(error);
+                toast.error(error?.response?.data?.message || error.message);
+            }
+        }
+    }, [user]);
 
     const getCartAmount = useCallback(() => {
         let totalAmount = 0;
