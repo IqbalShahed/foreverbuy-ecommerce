@@ -15,7 +15,6 @@ const ShopProvider = ({ children }) => {
     const [nextCursor, setNextCursor] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const navigate = useNavigate();
-    const [token, setToken] = useState('');
     const { user } = useAuth();
 
     // Clear cart when user logs out
@@ -162,10 +161,8 @@ const ShopProvider = ({ children }) => {
         getCartAmount,
         navigate,
         backendUrl,
-        token,
-        setToken,
         setCartItems
-    }), [search, showSearch, cartItems, addToCart, getCartCount, updateQuantity, getCartAmount, navigate, products, token, setToken]);
+    }), [search, showSearch, cartItems, addToCart, getCartCount, updateQuantity, getCartAmount, navigate, products]);
 
     return (
         <ShopContext.Provider value={contextValue}>
