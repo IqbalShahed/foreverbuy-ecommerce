@@ -5,8 +5,10 @@ import { assets } from '../assets/frontend_assets/assets';
 import { toast } from 'react-toastify';
 import { useShop } from '../context/ShopContex';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 function PlaceOrder() {
+    const {user} = useAuth();    
     const [paymentMethod, setPaymentMethod] = useState('cod');
     const [loading, setLoading] = useState(false);
     const {
@@ -62,7 +64,6 @@ function PlaceOrder() {
 
             const orderPayload = {
                 phone: formData.phone,
-                // email: formData.email,
                 items: orderItems,
                 amount: getCartAmount() + deliveryFee,
                 address: {
@@ -111,11 +112,12 @@ function PlaceOrder() {
                 <div className='text-xl sm:text-2xl py-3'>
                     <Title text1='DELIVERY' text2='INFORMATION' />
                 </div>
-                <div className='flex gap-3'>
+                {/* <div className='flex gap-3'>
                     <input required name='firstName' value={formData.firstName} onChange={onChangeHandler} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='First name' type="text" />
                     <input required name='lastName' value={formData.lastName} onChange={onChangeHandler} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Last name' type="text" />
-                </div>
-                <input required name='email' value={formData.email} onChange={onChangeHandler} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Email address' type="email" />
+                </div> */}
+                <input required name='name' value={user?.name || ''} readOnly onChange={onChangeHandler} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Name' type="name" />
+                <input required name='email' value={user?.email || ""} readOnly onChange={onChangeHandler} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Email address' type="email" />
                 <input required name='street' value={formData.street} onChange={onChangeHandler} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='Street' type="text" />
                 <div className='flex gap-3'>
                     <input required name='city' value={formData.city} onChange={onChangeHandler} className='border border-gray-300 rounded py-1.5 px-3.5 w-full' placeholder='City' type="text" />
