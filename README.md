@@ -8,9 +8,9 @@ It includes a customer-facing storefront, a secure admin dashboard, and a RESTfu
 ## 📁 Monorepo Structure
 
 /foreverbuy-ecommerce
-├── frontend/ # React app for customers
-├── backend/ # Express.js REST API
-├── admin/ # React app for admins
+- ├── frontend/ # React app for customers
+- ├── backend/ # Express.js REST API
+- ├── admin/ # React app for admins
 
 
 ---
@@ -80,8 +80,8 @@ npm install
 cd ../admin
 npm install
 ```
-
-***Setup Environment Variables***
+---
+## Setup Environment Variables
 Create a .env file in each of the following folders: backend/, frontend/, admin/.
 Example for /backend/.env:
 ```bash
@@ -90,8 +90,9 @@ MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 ```
 (See each subfolder for specific .env requirements.)
+---
 
-***Run the Apps***
+## Run the Apps
 Use separate terminals or a process manager like concurrently.
 
 # Start Backend
@@ -111,20 +112,22 @@ npm start
 cd ../admin
 npm start
 ```
+---
 
-***Future Enhancements***
-🔐 Online payment integration (Stripe, SSLCommerz, etc.)
-🧮 Inventory management and stock alerts
-📝 Customer reviews and ratings
-📊 Analytics dashboard for admin
+## Future Enhancements
+- 🔐 Online payment integration (Stripe, SSLCommerz, etc.)
+- 🧮 Inventory management and stock alerts
+- 📝 Customer reviews and ratings
+- 📊 Analytics dashboard for admin
 
-***License***
+---
+## License
 This project is open-source under the MIT License.
-
-***Contributing***
+---
+## Contributing
 Pull requests and feedback are welcome!
 For major feature changes, please open an issue first to discuss what you would like to change.
 
-***Author***
+## Author
 Iqbal Shahed
 GitHub: @IqbalShahed
