@@ -62,6 +62,11 @@ function PlaceOrder() {
                 }
             }
 
+            if (!orderItems.length) {
+                toast.error("Your cart is empty.");
+                return;
+            }
+
             const orderPayload = {
                 phone: formData.phone,
                 items: orderItems,
@@ -96,7 +101,7 @@ function PlaceOrder() {
             }
         } catch (error) {
             console.error(error);
-            toast.error(error.message || "Something went wrong.");
+            toast.error(error?.response?.data?.message || error.message || "Something went wrong.");
         } finally {
             setLoading(false);
         }

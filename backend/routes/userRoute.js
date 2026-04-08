@@ -6,7 +6,8 @@ const userRouter = express.Router();
 
 userRouter.post('/register', registerUser);
 userRouter.post('/login', userLogin);
+userRouter.get('/dashboard', verifyUser, getUserData);
 userRouter.get('/deshboard', verifyUser, getUserData);
-userRouter.post('/logout', verifyUser, userLogout);
+userRouter.post('/logout', userLogout);
 
 export default userRouter;

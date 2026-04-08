@@ -8,7 +8,7 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Orders from "./pages/Orders";
 import PlaceOrder from "./pages/PlaceOrder";
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate } from "react-router";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
@@ -33,6 +33,7 @@ const App = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
         <Route path="/place-order" element={<PrivateRoute><PlaceOrder /></PrivateRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer />
     </div>

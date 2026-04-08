@@ -22,7 +22,18 @@ const addProduct = async (req, res) => {
         }
 
         // Parse sizes if sent as string
-        const parsedSizes = typeof value.sizes === "string" ? JSON.parse(value.sizes) : value.sizes;
+        let parsedSizes = value.sizes;
+        if (typeof value.sizes === "string") {
+            try {
+                parsedSizes = JSON.parse(value.sizes);
+            } catch {
+                return res.status(400).json({
+                    success: false,
+                    message: "Validation failed",
+                    errors: ["sizes must be a valid JSON array"],
+                });
+            }
+        }
 
         // Process uploaded images
         const image1 = req?.files?.image1?.[0];
@@ -92,12 +103,13 @@ const listProducts = async (req, res) => {
         }
 
         const nextCursor = products[products.length - 1]._id;
+        const hasMore = products.length === queryLimit;
 
         res.status(200).json({
             success: true,
             products,
-            hasMore: true,
-            nextCursor, // Use this as ?lastId in next fetch
+            hasMore,
+            nextCursor: hasMore ? nextCursor : null, // Use this as ?lastId in next fetch
         });
 
     } catch (error) {

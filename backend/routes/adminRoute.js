@@ -13,6 +13,7 @@ const loginLimiter = rateLimit({
 const adminRouter = express.Router();
 adminRouter.post('/login', loginLimiter , adminLogin);
 adminRouter.post('/logout', loginLimiter , adminLogout);
+adminRouter.get('/dashboard', verifyAdmin , getAdminData);
 adminRouter.get('/deshboard', verifyAdmin , getAdminData);
 
 export default adminRouter;

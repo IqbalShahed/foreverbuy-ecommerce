@@ -10,7 +10,7 @@ orderRoute.put('/status', verifyAdmin, orderStatus);
 
 // Payment feature
 orderRoute.post('/place-cod', verifyUser, placeOrderCOD);
-orderRoute.post('/stripe', placeOrderStripe);
+orderRoute.post('/stripe', verifyUser, placeOrderStripe);
 
 // User feature
 orderRoute.get('/userOrders', verifyUser, userOrders);

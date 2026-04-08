@@ -2,7 +2,13 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(`${process.env.MONGODB_URI}/foreverbuy`);
+        if (!process.env.MONGODB_URI) {
+            throw new Error("MONGODB_URI is not defined");
+        }
+
+        await mongoose.connect(process.env.MONGODB_URI, {
+            dbName: process.env.MONGODB_DB_NAME || "foreverbuy",
+        });
         console.log('DB Connected');
 
         mongoose.connection.on('error', (err) => {

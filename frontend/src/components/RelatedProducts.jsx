@@ -3,18 +3,20 @@ import { useShop } from '../context/ShopContex';
 import Title from "./Title";
 import ProductItem from "./ProductItem";
 
-const RelatedProducts = ({ category, subcategory }) => {
+const RelatedProducts = ({ category, subCategory, currentProductId }) => {
   const { products } = useShop();
   const [related, setRelated] = useState([]);
 
   useEffect(() => {
     if (products.length) {
       const filtered = products.filter(item =>
-        item.category === category && item.subcategory === subcategory
+        item.category === category &&
+        item.subCategory === subCategory &&
+        item._id !== currentProductId
       );
       setRelated(filtered.slice(0, 5));
     }
-  }, [products, category, subcategory]);
+  }, [products, category, subCategory, currentProductId]);
 
   return (
     <div className="my-24">

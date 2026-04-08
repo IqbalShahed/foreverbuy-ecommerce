@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/deshboard`, { withCredentials: true });
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/dashboard`, { withCredentials: true });
             if (res.data.success) {
                 setUser(res.data.admin);
             }

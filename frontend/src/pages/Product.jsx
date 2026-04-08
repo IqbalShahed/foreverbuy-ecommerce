@@ -17,6 +17,7 @@ function Product() {
         if (product) {
             setProductDetails(product);
             setImage(product.image?.[0]);
+            setSize("");
         }
     }, [productId, products]);
     
@@ -30,18 +31,18 @@ function Product() {
                 {/* Product Images */}
                 <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
                     <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
-                        {productDetails.image.map((img) => (
+                        {productDetails.image.map((img, index) => (
                             <img
                                 onClick={() => setImage(img)}
                                 src={img.url}
-                                key={img._id}
-                                alt={img._id}
+                                key={img.public_id || img.url || index}
+                                alt={`${productDetails.name} preview ${index + 1}`}
                                 className='w-[24%] sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer'
                             />
                         ))}
                     </div>
                     <div className='w-full sm:w-[80%]'>
-                        <img src={image.url} alt="Selected product" className='w-full h-auto' />
+                        <img src={image?.url} alt={productDetails.name} className='w-full h-auto' />
                     </div>
                 </div>
 
@@ -105,7 +106,11 @@ function Product() {
             </div>
 
             {/* Related Products */}
-            <RelatedProducts category={productDetails.category} subcategory={productDetails.subcategory} />
+            <RelatedProducts
+                category={productDetails.category}
+                subCategory={productDetails.subCategory}
+                currentProductId={productDetails._id}
+            />
         </div>
     );
 }

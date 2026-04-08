@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
         try {
-            const res = await axios.get(`${backendUrl}/api/user/deshboard`, { withCredentials: true });
+            const res = await axios.get(`${backendUrl}/api/user/dashboard`, { withCredentials: true });
             if (res.data.success) {
                 setUser(res.data.user);
             }

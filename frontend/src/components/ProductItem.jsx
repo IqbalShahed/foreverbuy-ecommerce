@@ -4,10 +4,12 @@ import { Link } from "react-router";
 
 const ProductItem = ({ id, image, name, price }) => {
     const { currency } = useShop();
+    const imageUrl = image?.[0]?.url || image?.[0] || "";
+
     return (
         <Link className="text-gray-700 cursor-pointer" to={`/product/${id}`}>
             <div className="overflow-hidden">
-                <img className="hover:scale-110 transition ease-in-out" src={image[0].url} alt={name} />
+                <img className="hover:scale-110 transition ease-in-out" src={imageUrl} alt={name} />
                 <p className="text-sm pt-3 pb-1">{name}</p>
                 <p className="text-sm font-medium">{currency}{price}</p>
             </div>

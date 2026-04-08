@@ -11,9 +11,6 @@ const ShopProvider = ({ children }) => {
     const [showSearch, setShowSearch] = useState(false);
     const [cartItems, setCartItems] = useState({});
     const [products, setProducts] = useState([]);
-    const limit = 10;
-    const [nextCursor, setNextCursor] = useState(null);
-    const [hasMore, setHasMore] = useState(true);
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -24,29 +21,37 @@ const ShopProvider = ({ children }) => {
         }
     }, [user]);
 
-    // Fetch Products
+    // Fetch the full product catalogue page by page without triggering a render loop.
     const fetchProducts = useCallback(async () => {
-        if (!hasMore) return;
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/product/list`, {
-                params: {
-                    lastId: nextCursor,
-                    limit
+            let lastId = null;
+            let hasMoreProducts = true;
+            const allProducts = [];
+
+            while (hasMoreProducts) {
+                const res = await axios.get(`${backendUrl}/api/product/list`, {
+                    params: {
+                        lastId,
+                        limit: 50
+                    }
+                });
+
+                if (!res.data.success) {
+                    toast.error(res.data.message);
+                    return;
                 }
-            });
-            if (res.data.success) {
-                setProducts(prev => [...prev, ...res.data.products]);
-                setNextCursor(res.data.nextCursor);
-                setHasMore(res.data.hasMore);
-            } else {
-                toast.error(res.data.message);
+
+                allProducts.push(...res.data.products);
+                hasMoreProducts = res.data.hasMore;
+                lastId = res.data.nextCursor;
             }
 
+            setProducts(allProducts);
         } catch (error) {
             console.error(error);
             toast.error("Failed to fetch products");
         }
-    }, [nextCursor, hasMore]);
+    }, []);
 
     // Get user cart data from DB
     const userCartData = useCallback(async () => {
@@ -62,16 +67,21 @@ const ShopProvider = ({ children }) => {
 
     useEffect(() => {
         fetchProducts();
+    }, [fetchProducts]);
+
+    useEffect(() => {
         if (user) {
             userCartData();
         }
-    }, [fetchProducts, user, userCartData]);
+    }, [user, userCartData]);
 
     const addToCart = useCallback(async (itemId, size) => {
         if (!size) {
             toast.error('Select Product Size');
             return;
         }
+
+        const previousCartItems = cartItems;
 
         setCartItems(prev => {
             const updated = { ...prev };
@@ -87,11 +97,12 @@ const ShopProvider = ({ children }) => {
                     { withCredentials: true }
                 );
             } catch (error) {
+                setCartItems(previousCartItems);
                 console.error(error);
                 toast.error(error?.response?.data?.message || error.message);
             }
         }
-    }, [user]);
+    }, [cartItems, user]);
 
 
 
@@ -104,6 +115,8 @@ const ShopProvider = ({ children }) => {
     }, [cartItems]);
 
     const updateQuantity = useCallback(async (itemId, size, quantity) => {
+        const previousCartItems = cartItems;
+
         setCartItems(prev => {
             const updated = { ...prev };
             if (quantity === 0) {
@@ -125,11 +138,12 @@ const ShopProvider = ({ children }) => {
                     { withCredentials: true }
                 );
             } catch (error) {
+                setCartItems(previousCartItems);
                 console.error(error);
                 toast.error(error?.response?.data?.message || error.message);
             }
         }
-    }, [user]);
+    }, [cartItems, user]);
 
     const getCartAmount = useCallback(() => {
         let totalAmount = 0;

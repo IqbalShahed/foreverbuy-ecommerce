@@ -16,11 +16,14 @@ function Orders() {
                 let allOrdersItem = [];
                 res.data.orders.forEach((order) => {
                     order.items.forEach((item) => {
-                        item.status = order.status;
-                        item.payment = order.payment;
-                        item.paymentMethod = order.paymentMethod;
-                        item.date = order.createdAt;
-                        allOrdersItem.push(item);
+                        allOrdersItem.push({
+                            ...item,
+                            status: order.status,
+                            payment: order.payment,
+                            paymentMethod: order.paymentMethod,
+                            date: order.createdAt,
+                            orderId: order._id,
+                        });
                     });
                 });
                 setOrderData(allOrdersItem.reverse());
@@ -45,7 +48,7 @@ function Orders() {
             </div>
             <div>
                 {orderData?.map((product, index) => (
-                    <div key={index} className='py-4 border-y border-gray-300 text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+                    <div key={`${product.orderId}-${product.productId?._id || index}-${product.size}`} className='py-4 border-y border-gray-300 text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
                         <div className='flex items-start gap-6 text-sm'>
                             <img
                                 className='w-16 sm:w-20 object-cover border border-gray-200 bg-gray-50'

@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+const isBcryptHash = (value = "") => /^\$2[aby]\$\d{2}\$/.test(value);
+
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -12,7 +14,9 @@ const adminLogin = async (req, res) => {
             return res.status(401).json({ success: false, message: "Invalid credentials." });
         }
 
-        const isMatchedPassword = await bcrypt.compare(password, storedPassword);
+        const isMatchedPassword = isBcryptHash(storedPassword)
+            ? await bcrypt.compare(password, storedPassword)
+            : password === storedPassword;
         if (!isMatchedPassword) {
             return res.status(401).json({ success: false, message: "Invalid credentials." });
         }
