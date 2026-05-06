@@ -6,7 +6,7 @@ import RelatedProducts from '../components/RelatedProducts';
 
 function Product() {
     const { productId } = useParams();
-    const { products, currency, addToCart } = useShop();
+    const { products, currency, addToCart, trackUserActivity } = useShop();
 
     const [productDetails, setProductDetails] = useState(null);
     const [image, setImage] = useState('');
@@ -20,6 +20,11 @@ function Product() {
             setSize("");
         }
     }, [productId, products]);
+
+    useEffect(() => {
+        if (!productDetails?._id) return;
+        trackUserActivity({ type: "view", productId: productDetails._id });
+    }, [productDetails, trackUserActivity]);
     
 
     if (!productDetails) return <div>Loading...</div>;

@@ -18,7 +18,8 @@ function PlaceOrder() {
         getCartAmount,
         navigate,
         backendUrl,
-        setCartItems
+        setCartItems,
+        refreshRecommendations
     } = useShop();
 
     const [formData, setFormData] = useState({
@@ -89,6 +90,7 @@ function PlaceOrder() {
 
                         if (res.data.success) {
                             setCartItems({});
+                            refreshRecommendations();
                             navigate("/orders");
                             toast.success(res.data.message);
                         } else {

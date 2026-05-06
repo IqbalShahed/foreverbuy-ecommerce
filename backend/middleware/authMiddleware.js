@@ -34,3 +34,22 @@ export const verifyUser = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Invalid or expired token' });
     }
 }
+
+export const attachUserIfPresent = async (req, res, next) => {
+    try {
+        const token = req.cookies.user_token;
+        if (!token) {
+            return next();
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (user) {
+            req.user = user;
+        }
+    } catch (error) {
+        console.error("Optional auth middleware error:", error.message);
+    }
+
+    return next();
+};

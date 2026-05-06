@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { ShopContext } from "./ShopContex";
 import { backendUrl, currency, deliveryFee } from "../config/shopConfig";
@@ -11,6 +11,9 @@ const ShopProvider = ({ children }) => {
     const [showSearch, setShowSearch] = useState(false);
     const [cartItems, setCartItems] = useState({});
     const [products, setProducts] = useState([]);
+    const [recommendationVersion, setRecommendationVersion] = useState(0);
+    const recommendationCacheRef = useRef(new Map());
+    const recommendationRequestRef = useRef(new Map());
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -160,6 +163,71 @@ const ShopProvider = ({ children }) => {
         return totalAmount;
     }, [cartItems, products]);
 
+    const trackUserActivity = useCallback(async (payload) => {
+        if (!user) return;
+
+        try {
+            await axios.post(`${backendUrl}/api/ai/activity`, payload, { withCredentials: true });
+            recommendationCacheRef.current.clear();
+            setRecommendationVersion(version => version + 1);
+        } catch (error) {
+            console.error("Track activity failed:", error);
+        }
+    }, [user]);
+
+    const refreshRecommendations = useCallback(() => {
+        recommendationCacheRef.current.clear();
+        recommendationRequestRef.current.clear();
+        setRecommendationVersion(version => version + 1);
+    }, []);
+
+    const fetchRecommendations = useCallback(async (message = "") => {
+        const normalizedMessage = message.trim().toLowerCase();
+        const cacheKey = `${user?._id || "guest"}:${normalizedMessage}`;
+        const cachedEntry = recommendationCacheRef.current.get(cacheKey);
+
+        if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
+            return cachedEntry.products;
+        }
+
+        if (recommendationRequestRef.current.has(cacheKey)) {
+            return recommendationRequestRef.current.get(cacheKey);
+        }
+
+        const request = (async () => {
+            try {
+                const res = await axios.get(`${backendUrl}/api/ai/recommendations`, {
+                    params: normalizedMessage ? { message: normalizedMessage } : undefined,
+                    withCredentials: true,
+                });
+                const recommendedProducts = res.data.products || [];
+
+                recommendationCacheRef.current.set(cacheKey, {
+                    expiresAt: Date.now() + 60 * 1000,
+                    products: recommendedProducts,
+                });
+
+                return recommendedProducts;
+            } catch (error) {
+                console.error(error);
+                return [];
+            } finally {
+                recommendationRequestRef.current.delete(cacheKey);
+            }
+        })();
+
+        recommendationRequestRef.current.set(cacheKey, request);
+
+        try {
+            return await request;
+        } finally {
+            if (recommendationCacheRef.current.size > 20) {
+                const oldestKey = recommendationCacheRef.current.keys().next().value;
+                recommendationCacheRef.current.delete(oldestKey);
+            }
+        }
+    }, [user]);
+
     const contextValue = useMemo(() => ({
         products,
         currency,
@@ -175,8 +243,12 @@ const ShopProvider = ({ children }) => {
         getCartAmount,
         navigate,
         backendUrl,
-        setCartItems
-    }), [search, showSearch, cartItems, addToCart, getCartCount, updateQuantity, getCartAmount, navigate, products]);
+        setCartItems,
+        trackUserActivity,
+        fetchRecommendations,
+        refreshRecommendations,
+        recommendationVersion,
+    }), [search, showSearch, cartItems, addToCart, getCartCount, updateQuantity, getCartAmount, navigate, products, trackUserActivity, fetchRecommendations, refreshRecommendations, recommendationVersion]);
 
     return (
         <ShopContext.Provider value={contextValue}>

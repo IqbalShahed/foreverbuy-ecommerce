@@ -33,6 +33,8 @@ const orderSchema = new mongoose.Schema({
     payment: { type: Boolean, required: true, default: false }
 }, { timestamps: true });
 
+orderSchema.index({ userId: 1, createdAt: -1 });
+
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
 export default Order;

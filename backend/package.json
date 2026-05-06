@@ -10,6 +10,7 @@
   "author": "Iqbal Shahed",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^1.50.1",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.6.1",
     "cookie-parser": "^1.4.7",
@@ -22,6 +23,7 @@
     "mongoose": "^8.15.1",
     "multer": "^2.0.0",
     "nodemon": "^3.1.10",
+    "openai": "^4.104.0",
     "stripe": "^18.2.0",
     "validator": "^13.15.15"
   }

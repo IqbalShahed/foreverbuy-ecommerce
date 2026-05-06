@@ -4,7 +4,7 @@ import { assets } from "../assets/frontend_assets/assets";
 import { useLocation } from "react-router";
 
 const SearchBar = () => {
-    const { search, setSearch, showSearch, setShowSearch } = useShop();
+    const { search, setSearch, showSearch, setShowSearch, trackUserActivity } = useShop();
     const [visible, setVisible] = useState(false);
     const location = useLocation();
     useEffect(() => {
@@ -15,6 +15,19 @@ const SearchBar = () => {
             setVisible(false);
         }
     }, [location])
+
+    useEffect(() => {
+        if (!showSearch || !visible) return;
+
+        const trimmedSearch = search.trim();
+        if (trimmedSearch.length < 3) return;
+
+        const timeout = setTimeout(() => {
+            trackUserActivity({ type: "search", query: trimmedSearch });
+        }, 700);
+
+        return () => clearTimeout(timeout);
+    }, [search, showSearch, visible, trackUserActivity]);
 
     return showSearch && visible && (
         <div className="bordert-t border-b bg-gray-50 text-center">

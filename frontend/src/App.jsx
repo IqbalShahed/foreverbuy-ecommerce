@@ -12,6 +12,7 @@ import { Routes, Route, Navigate } from "react-router";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
+import AIChatAssistant from "./components/AIChatAssistant";
 import { ToastContainer } from 'react-toastify';
 import PublicRoute from "./routes/PublicRoute";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer />
+      <AIChatAssistant />
     </div>
   )
 }
